@@ -68,10 +68,6 @@ if st.button('Summarize Transcript'):
             st.write(f"<div style='color: #ADD8E6;'><b>Number of Chunks: {len(chunks)}</b></div>", unsafe_allow_html=True)
 
 
-
-
-
-
         for i, chunk in enumerate(chunks):
             response, processing_time = process_chunk(chunk)
             chunk_characters = len(chunk)
