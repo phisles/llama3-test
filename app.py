@@ -36,7 +36,7 @@ def process_chunk(chunk):
         return "Error: " + str(response.status_code), processing_time  # Include processing time even in case of error
 
 st.title('Llama3 Transcript Summerizer')
-st.subheader('Breaks transcript into chunks of 2500 characters, summarizes, combines these summaries, then generates a summary of the combined summaries')
+st.markdown('*Breaks transcript into chunks of 2500 characters, summarizes, combines these summaries, then generates a summary of the combined summaries*', unsafe_allow_html=False)
 transcript = st.text_area("Paste the transcript here:", height=300)
 
 if st.button('Summarize Transcript'):
@@ -58,9 +58,12 @@ if st.button('Summarize Transcript'):
         
         with summary_col:
             st.write("**Summary Data**", unsafe_allow_html=True)
-            st.write(f"**<font color='yellow'>Total Word Count:</font>** {words_in_transcript}", unsafe_allow_html=True)
-            st.write(f"**<font color='yellow'>Total Character Count:</font>** {characters_in_transcript}", unsafe_allow_html=True)
-            st.write(f"**<font color='blue'>Number of Chunks:</font>** {len(chunks)}", unsafe_allow_html=True)
+            st.write(f"**<font color='yellow'>Total Word Count: {words_in_transcript}</font>**", unsafe_allow_html=True)
+            st.write(f"**<font color='yellow'>Total Character Count: {characters_in_transcript}</font>**", unsafe_allow_html=True)
+            st.write(f"<div style='color: #ADD8E6;'><b>Number of Chunks: {len(chunks)}</b></div>", unsafe_allow_html=True)
+
+
+
 
 
 
@@ -72,12 +75,15 @@ if st.button('Summarize Transcript'):
             chunk_times.append(processing_time)
             chunk_characters_counts.append(chunk_characters)
             chunk_words_counts.append(chunk_words)
+            time_per_word = processing_time / chunk_words if chunk_words else 0  # Avoid division by zero
 
             with main_col:
-                st.markdown(f"<div style='color: blue; margin-left: 20px;'>**Chunk {i+1} Summary Preview:** {response[:200] + '...' if len(response) > 200 else response} (Processed in {processing_time:.2f} seconds)</div>", unsafe_allow_html=True)
-            
+                st.markdown(f"<div style='color: #ADD8E6; margin-left: 20px;'><strong>Chunk {i+1} Summary Preview:</strong> {response[:200] + '...' if len(response) > 200 else response} (Processed in {processing_time:.2f} seconds, {time_per_word:.4f} sec/word)</div>", unsafe_allow_html=True)
+
+
             with summary_col:
-                st.write(f"**<font color='blue'>Chunk {i+1}:**</font> {chunk_words} Words, {chunk_characters} Characters, {processing_time:.2f} sec", unsafe_allow_html=True)
+                st.write(f"<div style='color: #ADD8E6;'><b> {chunk_words} Words, {chunk_characters} Characters, {processing_time:.2f} sec, {time_per_word:.4f} sec/word", unsafe_allow_html=True)
+
 
     combined_response = " ".join(summaries).replace('\n', ' ').replace('\r', '')
     total_characters = sum(len(response) for response in summaries)
@@ -95,10 +101,12 @@ if st.button('Summarize Transcript'):
     final_summary, final_processing_time = process_chunk(final_full_prompt)
     end_overall_time = time.time()
     total_time = end_overall_time - start_overall_time
+    total_words = sum(chunk_words_counts)
+    total_time_per_word = total_time / total_words if total_words else 0  # Avoid division by zero
 
     with summary_col:
         st.markdown(f"**<font color='red'>Final Summary Processing Time:</font>** {final_processing_time:.2f} seconds", unsafe_allow_html=True)
-        st.markdown(f"**<font color='purple'>Total Processing Time:</font>** {total_time:.2f} seconds", unsafe_allow_html=True)
+        st.markdown(f"**<font color='purple'>Total Processing Time:</font>** {total_time:.2f} seconds, {total_time_per_word:.4f} sec/word", unsafe_allow_html=True)
 
 
 
