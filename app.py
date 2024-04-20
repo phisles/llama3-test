@@ -120,4 +120,3 @@ if st.button('Summarize Transcript'):
             file_name='final_summarized_transcript.txt',
             mime='text/plain'
         )
-
