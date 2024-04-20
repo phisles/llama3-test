@@ -3,6 +3,9 @@ import requests
 import json
 import time
 
+def download_button_clicked():
+    return False
+
 def process_chunk(chunk):
     url = "http://localhost:11434/api/generate"
     headers = {'Content-Type': 'application/json'}
@@ -38,6 +41,8 @@ def process_chunk(chunk):
 st.title('Llama3 Transcript Summerizer')
 st.markdown('*Breaks transcript into chunks of 2500 characters, summarizes, combines these summaries, then generates a summary of the combined summaries*', unsafe_allow_html=False)
 transcript = st.text_area("Paste the transcript here:", height=300)
+
+#state = st.session_state.get('state', clicked=False)
 
 if st.button('Summarize Transcript'):
     start_overall_time = time.time()
@@ -112,11 +117,3 @@ if st.button('Summarize Transcript'):
 
     response_placeholder = st.text_area("Final Summarized Response:", value=final_summary, height=300, key='final')
 
-    # Download button
-    if st.button('Download Final Summarized Text'):
-        st.download_button(
-            label="Download Text",
-            data=final_summary,
-            file_name='final_summarized_transcript.txt',
-            mime='text/plain'
-        )
