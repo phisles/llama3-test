@@ -8,6 +8,6 @@ This code utilizes the Streamlit framework to create a web application for summa
 4. **Displaying Chunk Summaries**: The summarized text for each chunk, along with its word count, character count, and processing time, is displayed on the web interface.
 5. **Combining Summaries**: The individual chunk summaries are combined into a single text, and extraneous content is removed.
 6. **Final Summary**: The combined summary is sent to the API again for further summarization, and the final summarized response is displayed along with its processing time.
-7. **Download**: Users can download the final summarized text as a file.
+7. **Download**: Users can download the final summarized text as a file, with summary details included
 
 The code mainly interacts with the Streamlit framework for the user interface, makes requests to an external API for text summarization using the Llama3 model via Ollama, processes the received data, and displays it back to the user.
