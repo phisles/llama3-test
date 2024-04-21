@@ -42,8 +42,6 @@ st.title('Llama3 Transcript Summerizer')
 st.markdown('*Breaks transcript into chunks of 2500 characters, summarizes, combines these summaries, then generates a summary of the combined summaries*', unsafe_allow_html=False)
 transcript = st.text_area("Paste the transcript here:", height=300)
 
-#state = st.session_state.get('state', clicked=False)
-
 if st.button('Summarize Transcript'):
     start_overall_time = time.time()
     characters_in_transcript = len(transcript)
