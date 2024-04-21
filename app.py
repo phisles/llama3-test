@@ -2,9 +2,14 @@ import streamlit as st
 import requests
 import json
 import time
+from io import StringIO
 
-def download_button_clicked():
-    return False
+
+# This function converts the final summary to a downloadable text file
+def get_text_file(data):
+    string_io = StringIO(data)
+    return string_io
+
 
 def process_chunk(chunk):
     url = "http://localhost:11434/api/generate"
@@ -38,9 +43,9 @@ def process_chunk(chunk):
     else:
         return "Error: " + str(response.status_code), processing_time  # Include processing time even in case of error
 
-st.title('Llama3 Transcript Summerizer')
+st.title('Llama3 Transcript Summarizer')
 st.markdown('*Breaks transcript into chunks of 2500 characters, summarizes, combines these summaries, then generates a summary of the combined summaries*', unsafe_allow_html=False)
-transcript = st.text_area("Paste the transcript here:", height=300)
+transcript = st.text_area("Paste the transcript here:", height=400)
 
 if st.button('Summarize Transcript'):
     start_overall_time = time.time()
@@ -60,7 +65,7 @@ if st.button('Summarize Transcript'):
             st.markdown(f"<div style='color: yellow;'>Original Transcript: {words_in_transcript} Words / {characters_in_transcript} Characters</div>", unsafe_allow_html=True)
         
         with summary_col:
-            st.write("**Summary Data**", unsafe_allow_html=True)
+            st.markdown('<span style="font-size: 20px;">**Summary Data**</span>', unsafe_allow_html=True)
             st.write(f"**<font color='yellow'>Total Word Count: {words_in_transcript}</font>**", unsafe_allow_html=True)
             st.write(f"**<font color='yellow'>Total Character Count: {characters_in_transcript}</font>**", unsafe_allow_html=True)
             st.write(f"<div style='color: #ADD8E6;'><b>Number of Chunks: {len(chunks)}</b></div>", unsafe_allow_html=True)
@@ -110,4 +115,31 @@ if st.button('Summarize Transcript'):
 
 
     response_placeholder = st.text_area("Final Summarized Response:", value=final_summary, height=300, key='final')
+
+    # Calculate character and word counts for the final summary
+    final_summary_characters = len(final_summary)
+    final_summary_words = len(final_summary.split())
+
+    # Prepare the content to be included in the text file
+    summary_info = (
+        f"Total Word Count of Original Transcript: {words_in_transcript}\n"
+        f"Total Character Count of Original Transcript: {characters_in_transcript}\n"
+        f"Number of Chunks: {len(chunks)}\n"
+        f"Final Summary Processing Time: {final_processing_time:.2f} seconds\n"
+        f"Total Processing Time: {total_time:.2f} seconds, {total_time_per_word:.4f} sec/word\n"
+        f"\nFinal Summarized Response:\n{final_summary}\n"
+        f"\nFinal Summary Word Count: {final_summary_words}\n"
+        f"Final Summary Character Count: {final_summary_characters}\n"
+    )
+
+    # Create a download button and provide the text file for download
+    download_button = st.download_button(
+        label="Download Full Summary Details",
+        data=summary_info.encode('utf-8'),  # Convert the full summary string to bytes
+        file_name="full_summary_details.txt",
+        mime="text/plain"
+    )
+
+
+
 
