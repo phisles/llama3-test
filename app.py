@@ -17,7 +17,7 @@ def process_chunk(chunk):
     
     prompt_text = (
         "You are a police analyst reviewing transcripts from police interviews and body worn cameras. "
-        "Please provide a concise and factual summary of no more than 100 words of this transcript, "
+        "Please provide a concise and factual summary of no more than 150 words of this transcript, "
         "focusing on key events and interactions. Highlight any critical incidents, notable exchanges, and official actions taken by the officer. "
         "Ensure the summary is clear and neutral, maintaining an objective tone throughout. "
         "If the transcript is in another language, provide your summary in English. "
@@ -94,13 +94,13 @@ if st.button('Summarize Transcript'):
     response_placeholder = st.text_area("Summarized Response:", value=combined_response, height=300, key='combined')
     st.write(f"**Total characters in summarized response:** {total_characters}")
 
-    final_prompt = ("You are an investigator reviewing combined summaries of an audio transcript. "
-                    "You will receive a large text file containing multiple summaries of different parts of the transcript. "
-                    "If the combined summary introduces another summary, it is the same summary, and should be considered an extension of the first summary"
-                    "You will summarize these summaries, removing any extraneous content such as what the text contains or audio quality issues, or duplicated details. "
-                    "You will then provide the final summary as a concise summary that does not add any description other than the summary itself. "
-                    "Your response will only contain the summary. Exclude introductory phrases in your response such as 'Here is a concise and factual summary of the  transcript, or Here is...'"
-                    "Here is the combined summary text to summarize:")
+    final_prompt = ("You are reviewing combined summaries of an audio transcript contained in a large text file. "
+                    "Each summary may introduce or extend previous summaries; treat these as continuous segments of the first summary. "
+                    "Your task is to consolidate these summaries into a concise summary of 175-200 words. "
+                    "Remove extraneous details such as content descriptions, audio quality issues, or repetitive information. "
+                    "Avoid using introductory phrases like 'Here is a concise and factual summary of the transcript.' "
+                    )
+
     final_full_prompt = final_prompt + combined_response
     final_summary, final_processing_time = process_chunk(final_full_prompt)
     end_overall_time = time.time()
