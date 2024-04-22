@@ -96,9 +96,10 @@ if st.button('Summarize Transcript'):
 
     final_prompt = ("You are reviewing combined summaries of an audio transcript contained in a large text file. "
                     "Each summary may introduce or extend previous summaries; treat these as continuous segments of the first summary. "
-                    "Your task is to consolidate these summaries into a concise summary of 175-200 words. "
+                    "Your task is to consolidate these summaries into a concise summary of 175-200 words with no bullet points our sections--only paragraphs. "
                     "Remove extraneous details such as content descriptions, audio quality issues, or repetitive information. "
-                    "Avoid using introductory phrases like 'Here is a concise and factual summary of the transcript.' "
+                    "Do not use bullet points--only paragraphs"
+                    "Avoid using introductory phrases--provide the summary only"
                     )
 
     final_full_prompt = final_prompt + combined_response
