@@ -8,10 +8,10 @@ from io import StringIO
 
 # Model Selection: Uncomment the desired model
 # model_selection = 'llama3:70b-text' 
-model_selection = 'llama3:text' # Default model
+#model_selection = 'llama3:text' # Default model
 
 ### models below are beter for chat or dialogue ###
-# model_selection = 'llama3'
+model_selection = 'llama3'
 # model_selection = 'llama3:70b'
 
 
@@ -43,12 +43,12 @@ def process_chunk(chunk):
     headers = {'Content-Type': 'application/json'}
     
     prompt_text = (
-        "You are a police analyst reviewing transcripts from police interviews and body worn cameras. "
+        "First check to see if the text provided contains any content. If it does not or contains only a single word, reject the message."
+        "You are a police analyst reviewing transcripts from police interviews and body worn cameras. If there is no transcript or only a single word, do not make up a fake summary. Instead inform the user there is nothing to summarize. "
         "Please provide a concise and factual summary of no more than 150 words of this transcript, "
         "focusing on key events and interactions. Highlight any critical incidents, notable exchanges, and official actions taken by the officer. "
         "Ensure the summary is clear and neutral, maintaining an objective tone throughout. "
         "If the transcript is in another language, provide your summary in English. "
-        "If there is no transcript or only a single word, do not make up a fake summary. Instead inform the user there is nothing to summarize"
         "If the quality of the transcript is hard to interpret, it is because the audio quality is poor. In such scenarios, do the best you can to interpret the transcript."
     )
     
@@ -129,10 +129,10 @@ if st.button('Summarize Transcript'):
     response_placeholder = st.text_area("Summarized Response:", value=combined_response, height=300, key='combined')
     st.write(f"**Total characters in summarized response:** {total_characters}")
 
-    final_prompt = ("You are reviewing combined summaries of an audio transcript contained in a large text file. "
+    final_prompt = ("You are reviewing multiple summaries of an audio transcript contained in a large text file. "
                     "Each summary may mention officers more than once; this is because each summary relates to a portion of the entire content. "
                     "Your task is to consolidate these summaries into a concise summary of 150-175 words with no bullet points or sections--only paragraphs. "
-                    "Do not break down or describe summaries seperately. Provide only one continuous summary without mentioning the indiviudal summaries. "
+                    "Do not break down or describe summaries seperately. Provide only one continuous summary without mentioning the individual summaries. "
                     "Remove extraneous details such as content descriptions, audio quality issues, or repetitive information. "
                     "Do not use bullet points--only paragraphs"
                     "Avoid using introductory phrases--provide the summary only"
