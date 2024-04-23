@@ -28,6 +28,7 @@ def process_chunk(chunk):
 
     data = {
         "model": "llama3",
+        #"model": "llama3:70b-text",
         "stream": False,
         "prompt": full_prompt
     }
@@ -95,8 +96,9 @@ if st.button('Summarize Transcript'):
     st.write(f"**Total characters in summarized response:** {total_characters}")
 
     final_prompt = ("You are reviewing combined summaries of an audio transcript contained in a large text file. "
-                    "Each summary may introduce or extend previous summaries; treat these as continuous segments of the first summary. "
-                    "Your task is to consolidate these summaries into a concise summary of 175-200 words with no bullet points or sections--only paragraphs. "
+                    "Each summary may mention officers more than once; this is because each summary relates to a portion of the entire content. "
+                    "Your task is to consolidate these summaries into a concise summary of 150-175 words with no bullet points or sections--only paragraphs. "
+                    "Do not break down or describe summaries seperately. Provide only one continuous summary without mentioning the indiviudal summaries. "
                     "Remove extraneous details such as content descriptions, audio quality issues, or repetitive information. "
                     "Do not use bullet points--only paragraphs"
                     "Avoid using introductory phrases--provide the summary only"
