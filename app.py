@@ -4,6 +4,8 @@ import json
 import time
 from io import StringIO
 
+
+
 # Model Selection: Uncomment the desired model
 # model_selection = 'llama3:70b-text' 
 model_selection = 'llama3:text' # Default model
@@ -13,7 +15,20 @@ model_selection = 'llama3:text' # Default model
 # model_selection = 'llama3:70b'
 
 
-# Remaining part of your code...
+
+
+# In Streamlit UI
+# Explicitly updating and displaying the model
+#model_display = model_selection  # Direct assignment to another variable
+#print("Model set to:", model_display)
+#st.write("Model selected in Streamlit UI:", model_display)
+model_encoded = model_selection.encode('utf-8')
+st.write("Model encoded:", model_encoded)
+
+# Replacing colon to see if it displays fully
+model_replaced = model_selection.replace(':', ';')
+st.write("Model with replaced character:", model_replaced)
+#st.write("Model selected:", model_selection)
 
 
 
@@ -38,17 +53,23 @@ def process_chunk(chunk):
     )
     
     full_prompt = prompt_text + chunk  # Combine the fixed prompt with the chunk of text
-
     data = {
         "model": model_selection,
         "stream": False,
         "prompt": full_prompt
     }
     
+    # Before making the request
+    print("Using model:", model_selection)
+    json_payload = json.dumps(data)
+    print("Payload being sent:", json_payload)
+
     start_time = time.time()  # Start timing before the request
     response = requests.post(url, headers=headers, data=json.dumps(data))
     processing_time = time.time() - start_time  # End timing after the request
     
+
+
     if response.status_code == 200:
         response_text = response.text
         data = json.loads(response_text)
@@ -79,7 +100,7 @@ if st.button('Summarize Transcript'):
         
         with summary_col:
             st.markdown('<span style="font-size: 20px;">**Summary Data**</span>', unsafe_allow_html=True)
-            st.markdown(f"**<font color='green'>Model: {model_selection}**", unsafe_allow_html=True)
+            st.markdown(f"**<font color='green'>Model: {model_replaced}**", unsafe_allow_html=True)
             st.write(f"**<font color='yellow'>Total Word Count: {words_in_transcript}</font>**", unsafe_allow_html=True)
             st.write(f"**<font color='yellow'>Total Character Count: {characters_in_transcript}</font>**", unsafe_allow_html=True)
             st.write(f"<div style='color: #ADD8E6;'><b>Number of Chunks: {len(chunks)}</b></div>", unsafe_allow_html=True)
@@ -138,7 +159,7 @@ if st.button('Summarize Transcript'):
 
     # Prepare the content to be included in the text file
     summary_info = (
-        f"Model Used: {model_selection}\n"
+        f"Model Used: {model_replaced}\n"
         f"Total Word Count of Original Transcript: {words_in_transcript}\n"
         f"Total Character Count of Original Transcript: {characters_in_transcript}\n"
         f"Number of Chunks: {len(chunks)}\n"
