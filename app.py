@@ -4,6 +4,18 @@ import json
 import time
 from io import StringIO
 
+# Model Selection: Uncomment the desired model
+# model_selection = 'llama3:70b-text' 
+model_selection = 'llama3:text' # Default model
+
+### models below are beter for chat or dialogue ###
+# model_selection = 'llama3'
+# model_selection = 'llama3:70b'
+
+
+# Remaining part of your code...
+
+
 
 # This function converts the final summary to a downloadable text file
 def get_text_file(data):
@@ -21,14 +33,14 @@ def process_chunk(chunk):
         "focusing on key events and interactions. Highlight any critical incidents, notable exchanges, and official actions taken by the officer. "
         "Ensure the summary is clear and neutral, maintaining an objective tone throughout. "
         "If the transcript is in another language, provide your summary in English. "
+        "If there is no transcript or only a single word, do not make up a fake summary. Instead inform the user there is nothing to summarize"
         "If the quality of the transcript is hard to interpret, it is because the audio quality is poor. In such scenarios, do the best you can to interpret the transcript."
     )
     
     full_prompt = prompt_text + chunk  # Combine the fixed prompt with the chunk of text
 
     data = {
-        "model": "llama3",
-        #"model": "llama3:70b-text",
+        "model": model_selection,
         "stream": False,
         "prompt": full_prompt
     }
@@ -67,6 +79,7 @@ if st.button('Summarize Transcript'):
         
         with summary_col:
             st.markdown('<span style="font-size: 20px;">**Summary Data**</span>', unsafe_allow_html=True)
+            st.markdown(f"**<font color='green'>Model: {model_selection}**", unsafe_allow_html=True)
             st.write(f"**<font color='yellow'>Total Word Count: {words_in_transcript}</font>**", unsafe_allow_html=True)
             st.write(f"**<font color='yellow'>Total Character Count: {characters_in_transcript}</font>**", unsafe_allow_html=True)
             st.write(f"<div style='color: #ADD8E6;'><b>Number of Chunks: {len(chunks)}</b></div>", unsafe_allow_html=True)
@@ -125,6 +138,7 @@ if st.button('Summarize Transcript'):
 
     # Prepare the content to be included in the text file
     summary_info = (
+        f"Model Used: {model_selection}\n"
         f"Total Word Count of Original Transcript: {words_in_transcript}\n"
         f"Total Character Count of Original Transcript: {characters_in_transcript}\n"
         f"Number of Chunks: {len(chunks)}\n"
@@ -133,7 +147,8 @@ if st.button('Summarize Transcript'):
         f"\nFinal Summarized Response:\n{final_summary}\n"
         f"\nFinal Summary Word Count: {final_summary_words}\n"
         f"Final Summary Character Count: {final_summary_characters}\n"
-    )
+)
+
 
     # Create a download button and provide the text file for download
     download_button = st.download_button(
