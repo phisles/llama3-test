@@ -14,22 +14,10 @@ from io import StringIO
 model_selection = 'llama3'
 # model_selection = 'llama3:70b'
 
-
-
-
-# In Streamlit UI
-# Explicitly updating and displaying the model
-#model_display = model_selection  # Direct assignment to another variable
-#print("Model set to:", model_display)
-#st.write("Model selected in Streamlit UI:", model_display)
 model_encoded = model_selection.encode('utf-8')
 st.write("Model encoded:", model_encoded)
-
-# Replacing colon to see if it displays fully
 model_replaced = model_selection.replace(':', ';')
 st.write("Model with replaced character:", model_replaced)
-#st.write("Model selected:", model_selection)
-
 
 
 # This function converts the final summary to a downloadable text file
@@ -43,10 +31,11 @@ def process_chunk(chunk):
     headers = {'Content-Type': 'application/json'}
     
     prompt_text = (
-        "First check to see if the text provided contains any content. If it does not or contains only a single word, reject the message."
-        "You are a police analyst reviewing transcripts from police interviews and body worn cameras. If there is no transcript or only a single word, do not make up a fake summary. Instead inform the user there is nothing to summarize. "
+        "First check to see if the text provided contains any content. If it does not contain content or only a single word like 'test', stop."
+        "You are a police analyst reviewing transcripts from police interviews and body worn cameras. "
         "Please provide a concise and factual summary of no more than 150 words of this transcript, "
-        "focusing on key events and interactions. Highlight any critical incidents, notable exchanges, and official actions taken by the officer. "
+        "focusing on key events and interactions. If relevant, highlight any critical incidents, notable exchanges, or official actions taken by the officer. "
+        "If there is only dialogue,summarize the dialogue. "
         "Ensure the summary is clear and neutral, maintaining an objective tone throughout. "
         "If the transcript is in another language, provide your summary in English. "
         "If the quality of the transcript is hard to interpret, it is because the audio quality is poor. In such scenarios, do the best you can to interpret the transcript."
@@ -62,7 +51,7 @@ def process_chunk(chunk):
     # Before making the request
     print("Using model:", model_selection)
     json_payload = json.dumps(data)
-    print("Payload being sent:", json_payload)
+    print("Payload being sent:", json_payload[:500] + "..." if len(json_payload) > 500 else json_payload)
 
     start_time = time.time()  # Start timing before the request
     response = requests.post(url, headers=headers, data=json.dumps(data))
@@ -139,6 +128,10 @@ if st.button('Summarize Transcript'):
                     )
 
     final_full_prompt = final_prompt + combined_response
+
+    json_payload_for_logging = json.dumps({"prompt": final_full_prompt})
+    print("Payload for final summary being sent:", json_payload_for_logging[:500] + "..." if len(json_payload_for_logging) > 500 else json_payload_for_logging)
+
     final_summary, final_processing_time = process_chunk(final_full_prompt)
     end_overall_time = time.time()
     total_time = end_overall_time - start_overall_time
